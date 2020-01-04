@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+ <html lang="en">
+ 
+ <head>
+     <meta charset="utf-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="description" content="">
+     <meta name="author" content="">
+ 
+     <title>LEDs With Flask</title>
+ 
+     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>
+ 
+      <style>
+         i {
+            border: solid black;
+            border-width: 0 10px 10px 0;
+            display: inline-block;
+            padding: 50px;
+            margin: 100px;
+         }
+         
+         i:hover {
+            cursor: pointer;
+         }
+
+         .up {
+         transform: rotate(-135deg);
+         -webkit-transform: rotate(-135deg);
+         }
+
+         .down {
+         transform: rotate(45deg);
+         -webkit-transform: rotate(45deg);
+         }
+      </style>
+
+  </head>
+   <body>
+   
+      <div class="container">
+            <div>
+               <i id="button" class="up"></i>
+            </div>
+
+            <div>
+               <i id="button2" class="down"></i>
+            </div>
+      </div>
+      <script>
+            $(function() {
+               var currentPin = 8;
+
+               $('#button').click(function() {
+                  console.log("current pin: " + currentPin)
+                  if(currentPin == 8){
+                     currentPin = 13
+                  }
+                  else if(currentPin == 11){
+                     currentPin = 8
+                  }
+
+                  $.ajax({
+                        url: '/light-led?pin=' + currentPin,
+                        data: $('form').serialize(),
+                        type: 'POST',
+                        success: function(response) {
+                           console.log(response);
+                        },
+                        error: function(error) {
+                           console.log(error);
+                        }
+                  });
+               });
+
+
+               $('#button2').click(function() {
+                  console.log("current pin: " + currentPin)
+                  if(currentPin == 13){
+                     currentPin = 8
+                  }
+                  else if(currentPin == 8){
+                     currentPin = 11
+                  }
+
+                  $.ajax({
+                        url: '/light-led?pin=' + currentPin,
+                        data: $('form').serialize(),
+                        type: 'POST',
+                        success: function(response) {
+                           console.log(response);
+                        },
+                        error: function(error) {
+                           console.log(error);
+                        }
+                  });
+               });
+            });
+      </script>
+   </body>
+ 
+ </html>
