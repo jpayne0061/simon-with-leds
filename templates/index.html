@@ -8,36 +8,13 @@
      <meta name="description" content="">
      <meta name="author" content="">
  
-     <title>LEDs With Flask</title>
+     <title>Simon LEDs</title>
  
      <script src="https://code.jquery.com/jquery-1.12.4.min.js"
   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
   crossorigin="anonymous"></script>
  
       <style>
-         i {
-            border: solid black;
-            border-width: 0 10px 10px 0;
-            display: inline-block;
-            padding: 50px;
-            margin: 100px;
-            margin-bottom: 50px;
-         }
-         
-         i:hover {
-            cursor: pointer;
-         }
-
-         .up {
-         transform: rotate(-135deg);
-         -webkit-transform: rotate(-135deg);
-         }
-
-         .down {
-         transform: rotate(45deg);
-         -webkit-transform: rotate(45deg);
-         }
-
          .color-block {
             display: block;
             width: 100px;
@@ -45,12 +22,16 @@
             border: 4px solid black;
             margin: 20px;
          }
+
+         .color-block:hover {
+            cursor: pointer;
+         }
       </style>
 
   </head>
    <body>
    
-      <div class="container">
+      <div>
             <div id="eleven" class="color-block" style="background-color: rgb(0, 128, 0); margin: auto; margin-top: 30px">
             </div>
 
@@ -64,48 +45,39 @@
             $(function() {
 
                var current_sequence = []
-               var currentPin = 5;
                var activity = Date.now();
 
-               $('#eleven').click(function() {
+               var green = 'rgb(0,   128, 0)'
+               var blue  = 'rgb(0,   0, 255)'
+               var red   = 'rgb(255, 0, 0)'
+
+               var light_green = 'rgb(0,   255, 0)'
+               var light_blue  = 'rgb(115, 115, 255)'
+               var light_red   = 'rgb(255, 117, 117)'
+
+               $('#eleven').click(function(){
                   activity = Date.now()
                   current_sequence.push(11)
-                  $(this).css('background-color', 'rgb(0, 255, 0)')
-                  setTimeout(function(){ $('#eleven').css('background-color', 'rgb(0, 128, 0)'); }, 200);
-                  setTimeout(function(){ 
-                     if(Date.now() - activity >= 1000){
-                        send_sequence()
-                     }
-                   }, 1000);
+                  $('#eleven').css('background-color', light_green)
+                  setTimeout(function(){ $('#eleven').css('background-color', green) }, 200);
+                  send_sequence_if_no_activity()
                });
 
-
-               $('#five').click(function() {
+               $('#five').click(function(){
                   activity = Date.now()
                   current_sequence.push(5)
-                  $(this).css('background-color', 'rgb(115, 115, 255)')
-                  setTimeout(function(){ $('#five').css('background-color', 'rgb(0, 0, 255)'); }, 200);
-                  setTimeout(function(){ 
-                     if(Date.now() - activity >= 1000){
-                        send_sequence()
-                     }
-                   }, 1000);
+                  $('#five').css('background-color', light_blue)
+                  setTimeout(function(){ $('#five').css('background-color', blue) }, 200);
+                  send_sequence_if_no_activity()
                });
 
-
-               $('#three').click(function() {
+               $('#three').click(function(){
                   activity = Date.now()
                   current_sequence.push(3)
-                  $(this).css('background-color', 'rgb(255, 117, 117)')
-                  setTimeout(function(){ $('#three').css('background-color', 'rgb(255, 0, 0)'); }, 200);
-                  setTimeout(function(){ 
-                     if(Date.now() - activity >= 1000){
-                        send_sequence()
-                     }
-                   }, 1000);
+                  $('#three').css('background-color', light_red)
+                  setTimeout(function(){ $('#three').css('background-color', red) }, 200);
+                  send_sequence_if_no_activity()
                });
-
-               $('#check-sequence').click(send_sequence);
 
                function send_sequence(){
                   str_sequence = current_sequence.join()
@@ -118,17 +90,25 @@
                         success: function(response) {
                            console.log(response);
                            if(response == 'fail'){
-                              current_sequence = []
+                              current_sequence = [] //new game
                            }
                         },
                         error: function(error) {
-                           current_sequence = []
+                           current_sequence = [] //new game
                            console.log(error);
                         }
                   });
                }
+
+               function send_sequence_if_no_activity(){
+                  setTimeout(function(){ 
+                     if(Date.now() - activity >= 1000){
+                        send_sequence()
+                     }
+                   }, 1000);
+               }
             });
+
       </script>
    </body>
- 
  </html>
