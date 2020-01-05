@@ -37,74 +37,96 @@
          transform: rotate(45deg);
          -webkit-transform: rotate(45deg);
          }
+
+         .color-block {
+            display: block;
+            width: 100px;
+            height: 70px;
+            border: 4px solid black;
+            margin: 20px;
+         }
       </style>
 
   </head>
    <body>
    
       <div class="container">
-            <div>
-               <i id="button" class="up"></i>
+            <div id="eleven" class="color-block" style="background-color: rgb(0, 128, 0); margin: auto; margin-top: 30px">
             </div>
 
-            <div>
-               <i id="button2" class="down"></i>
+            <div id="five" class="color-block" style="background-color: rgb(0, 0, 255); margin: auto; margin-top: 30px">
+            </div>
+
+            <div id="three" class="color-block" style="background-color: rgb(255, 0, 0); margin: auto; margin-top: 30px">
             </div>
       </div>
       <script>
             $(function() {
+
+               var current_sequence = []
                var currentPin = 5;
+               var activity = Date.now();
 
-               $('#button').click(function() {
-                  console.log("current pin: " + currentPin)
-                  if(currentPin == 5){
-                     currentPin = 11
-                  }
-                  else if(currentPin == 3){
-                     currentPin = 5
-                  }
-                  else if (currentPin == 11){
-                     currentPin = 3;
-                  }
+               $('#eleven').click(function() {
+                  activity = Date.now()
+                  current_sequence.push(11)
+                  $(this).css('background-color', 'rgb(0, 255, 0)')
+                  setTimeout(function(){ $('#eleven').css('background-color', 'rgb(0, 128, 0)'); }, 200);
+                  setTimeout(function(){ 
+                     if(Date.now() - activity >= 1000){
+                        send_sequence()
+                     }
+                   }, 1000);
+               });
 
+
+               $('#five').click(function() {
+                  activity = Date.now()
+                  current_sequence.push(5)
+                  $(this).css('background-color', 'rgb(115, 115, 255)')
+                  setTimeout(function(){ $('#five').css('background-color', 'rgb(0, 0, 255)'); }, 200);
+                  setTimeout(function(){ 
+                     if(Date.now() - activity >= 1000){
+                        send_sequence()
+                     }
+                   }, 1000);
+               });
+
+
+               $('#three').click(function() {
+                  activity = Date.now()
+                  current_sequence.push(3)
+                  $(this).css('background-color', 'rgb(255, 117, 117)')
+                  setTimeout(function(){ $('#three').css('background-color', 'rgb(255, 0, 0)'); }, 200);
+                  setTimeout(function(){ 
+                     if(Date.now() - activity >= 1000){
+                        send_sequence()
+                     }
+                   }, 1000);
+               });
+
+               $('#check-sequence').click(send_sequence);
+
+               function send_sequence(){
+                  str_sequence = current_sequence.join()
+                  current_sequence = []
+                  console.log(str_sequence)
                   $.ajax({
-                        url: '/light-led?pin=' + currentPin,
+                        url: '/check-sequence?sequence=' + str_sequence,
                         data: $('form').serialize(),
                         type: 'POST',
                         success: function(response) {
                            console.log(response);
+                           if(response == 'fail'){
+                              current_sequence = []
+                           }
                         },
                         error: function(error) {
+                           current_sequence = []
                            console.log(error);
                         }
                   });
-               });
-
-
-               $('#button2').click(function() {
-                  console.log("current pin: " + currentPin)
-                  if(currentPin == 11){
-                     currentPin = 5
-                  }
-                  else if(currentPin == 5){
-                     currentPin = 3
-                  }
-                  else if(currentPin == 3){
-                     currentPin = 11
-                  }
-
-                  $.ajax({
-                        url: '/light-led?pin=' + currentPin,
-                        data: $('form').serialize(),
-                        type: 'POST',
-                        success: function(response) {
-                           console.log(response);
-                        },
-                        error: function(error) {
-                           console.log(error);
-                        }
-                  });
-               });
+               }
             });
       </script>
    </body>
